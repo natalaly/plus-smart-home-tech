@@ -35,7 +35,7 @@ analyzer:
         group-id: telemetry.analyzer.hub
         auto-offset-reset: earliest
         enable-auto-commit: false
-        consume-attempt-timeout-ms: 1000
+        consume-attempt-timeout-ms: 7000
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: ru.yandex.practicum.kafka.deserializer.HubEventDeserializer
     topics:
@@ -58,5 +58,3 @@ logging:
 #    org.hibernate.SQL: DEBUG
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
-
-#TODO

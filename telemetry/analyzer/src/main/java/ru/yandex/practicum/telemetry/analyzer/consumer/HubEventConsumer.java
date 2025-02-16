@@ -13,8 +13,6 @@ import ru.yandex.practicum.telemetry.analyzer.configuration.kafka.AnalyzerTopics
 import ru.yandex.practicum.telemetry.analyzer.configuration.kafka.consumer.AnalyzerHubConsumerConfig;
 import ru.yandex.practicum.telemetry.analyzer.dispatcher.HubEventDispatcher;
 
-//TODO make abstract class for consumer classes - hub and snapshot events???
-
 /**
  * The {@code HubEventConsumer} class listens to Kafka topics related to hub events and processes
  * messages regarding device additions, removals, and scenario updates.
@@ -55,21 +53,26 @@ public class HubEventConsumer implements Runnable {
     Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
     try {
       consumer.subscribe(topics);
-      log.debug("Consumer {} subscribed for the topics {}.", consumer.getClass(), topics);
+      log.debug("Consumer {} subscribed for the topics {}.", consumer.getClass().getName(), topics);
 
-      while (true) {
-        ConsumerRecords<String, HubEventAvro> records = consumer.poll(CONSUME_ATTEMPT_TIMEOUT);
-        if (!records.isEmpty()) {
-          processRecords(records);
-          doCommitOffsets();
-        }
-      }
+      pollLoop();
+
     } catch (WakeupException ignores) {
       log.warn("WakeupException caught - Consumer shutting down.");
     } catch (Exception e) {
       log.error("Error during event processing", e);
     } finally {
       cleanupResources();
+    }
+  }
+
+  private void pollLoop() {
+    while (true) {
+      ConsumerRecords<String, HubEventAvro> records = consumer.poll(CONSUME_ATTEMPT_TIMEOUT);
+      if (!records.isEmpty()) {
+        processRecords(records);
+        doCommitOffsets();
+      }
     }
   }
 
@@ -85,7 +88,7 @@ public class HubEventConsumer implements Runnable {
       consumer.commitSync();
       log.debug("Offsets committed successfully.");
     } catch (Exception e) {
-      log.warn("Error committing consumer offsets", e);
+      log.warn("Error during committing consumer offsets", e);
     }
   }
 
@@ -95,7 +98,7 @@ public class HubEventConsumer implements Runnable {
     } catch (Exception e) {
       log.error("Error during resource cleanup", e);
     } finally {
-      log.info("Closing Kafka consumer.");
+      log.info("Closing Kafka consumer {}.", consumer.getClass().getName());
       consumer.close();
     }
   }

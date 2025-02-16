@@ -5,4 +5,4 @@ import ru.yandex.practicum.telemetry.analyzer.entity.DeviceAction;
 
 public interface ActionRepository extends JpaRepository<DeviceAction, Long> {
 }
-//TODO
+

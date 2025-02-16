@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.analyzer.handler;
+package ru.yandex.practicum.telemetry.analyzer.handler.hub;
 
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ScenarioRemovedEventHandler extends BaseHubEventHandler<ScenarioRem
   @Override
   protected void handle(final String hubId, final ScenarioRemovedEventAvro payload) {
     log.info("Removing scenario '{}' from hub {}.", payload.getName(), hubId);
-    scenarioRepository.deleteByNameAndHuId(payload.getName(), hubId);
+    scenarioRepository.deleteByNameAndHubId(payload.getName(), hubId);
   }
 
 }

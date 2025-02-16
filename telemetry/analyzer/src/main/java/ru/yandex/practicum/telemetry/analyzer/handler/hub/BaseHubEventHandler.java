@@ -1,9 +1,10 @@
-package ru.yandex.practicum.telemetry.analyzer.handler;
+package ru.yandex.practicum.telemetry.analyzer.handler.hub;
 
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.yandex.practicum.telemetry.analyzer.handler.HubEventHandler;
 
 /**
  * Base class for handling HubEventAvro messages.

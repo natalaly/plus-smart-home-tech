@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.analyzer.service;
+package ru.yandex.practicum.telemetry.analyzer.runner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

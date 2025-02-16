@@ -5,4 +5,4 @@ import ru.yandex.practicum.telemetry.analyzer.entity.ScenarioCondition;
 
 public interface ConditionRepository extends JpaRepository<ScenarioCondition, Long> {
 }
-//TODO
+

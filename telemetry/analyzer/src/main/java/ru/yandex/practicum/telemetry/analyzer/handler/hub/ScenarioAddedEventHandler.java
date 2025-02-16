@@ -1,4 +1,4 @@
-package ru.yandex.practicum.telemetry.analyzer.handler;
+package ru.yandex.practicum.telemetry.analyzer.handler.hub;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class ScenarioAddedEventHandler extends BaseHubEventHandler<ScenarioAdded
 
   private void addScenario(final String hubId, final ScenarioAddedEventAvro event) {
     log.debug("Adding to DB scenario {} for the hub with ID {}.", event.getName(), hubId);
-    final Scenario scenarioToSave = ScenarioMapper.mapToScenario(event, hubId);
+    final Scenario scenarioToSave = ScenarioMapper.toScenario(event, hubId);
     final Optional<Scenario> existedScenario =
         scenarioRepository.findByHubIdAndName(hubId, event.getName());
     scenarioToSave.setId(existedScenario.map(Scenario::getId).orElse(null));
