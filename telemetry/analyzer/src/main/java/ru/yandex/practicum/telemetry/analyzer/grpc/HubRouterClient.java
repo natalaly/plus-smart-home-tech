@@ -7,7 +7,7 @@ import ru.yandex.practicum.grpc.telemetry.event.DeviceActionRequest;
 import ru.yandex.practicum.grpc.telemetry.hubrouter.HubRouterControllerGrpc;
 
 /**
- * gRPC-клиент для отправки действий на устройства хаба.
+ * gRPC-client for sending actions to the Hub Router.
  */
 @Service
 @Slf4j
@@ -20,13 +20,6 @@ public class HubRouterClient {
     this.hubRouterClient = hubRouterClient;
   }
 
-  /**
-   * Отправляет команду устройству через gRPC.
-   *
-   * @ param sensorId ID сенсора.
-   * @ param type     Тип действия.
-   * @ param value    Значение (опционально).
-   */
   public void send(final DeviceActionRequest request) {
 
     hubRouterClient.handleDeviceAction(request);
