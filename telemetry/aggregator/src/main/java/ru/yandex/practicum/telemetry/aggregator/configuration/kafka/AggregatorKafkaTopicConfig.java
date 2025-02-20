@@ -9,6 +9,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for Kafka topic management in the telemetry aggregator.
+ * <p>
+ * This class provides beans for producer and consumer topics, ensuring they are properly injected
+ * from the application's configuration.
+ */
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "aggregator.kafka.topics")

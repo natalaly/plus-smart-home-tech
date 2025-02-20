@@ -1,5 +1,6 @@
 package ru.yandex.practicum.telemetry.collector.producer;
 
+import jakarta.annotation.PreDestroy;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,18 +12,22 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
 
 /**
- * Kafka producer for sending sensor and hub events to a specific topic.
+ * {@link KafkaEventProducer} is responsible for producing and sending messages to a Kafka topic.
+ * <p>
+ * It uses a Kafka {@link Producer} to publish Avro messages and ensures proper resource management
+ * by closing the producer when the application shuts down.
  */
 @Component
 @Slf4j
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class KafkaEventProducer {
+public class KafkaEventProducer implements AutoCloseable {
 
   private final Producer<String, SpecificRecordBase> producer;
 
-  public void send(final SpecificRecordBase event, final String key, final Instant timestamp, final String topic) {
+  public void send(final SpecificRecordBase event, final String key, final Instant timestamp,
+                   final String topic) {
     log.info("Starting sending message to Kafka. Topic: {}, Key: {}, Payload: {}", topic, key,
         event);
     try {
@@ -44,4 +49,16 @@ public class KafkaEventProducer {
     }
   }
 
+  @PreDestroy
+  @Override
+  public void close() {
+    try {
+      log.info("Flushing producer buffer.");
+      producer.flush();
+      log.info("Closing Kafka producer.");
+      producer.close();
+    } catch (Exception e) {
+      log.error("Error during closing Kafka producer", e);
+    }
+  }
 }

@@ -26,7 +26,6 @@ analyzer:
         bootstrap-servers: localhost:9092
         group-id: telemetry.analyzer.snapshot
         auto-offset-reset: earliest
-        enable-auto-commit: false
         consume-attempt-timeout-ms: 1000
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: ru.yandex.practicum.kafka.deserializer.SensorsSnapshotDeserializer
@@ -34,7 +33,6 @@ analyzer:
         bootstrap-servers: localhost:9092
         group-id: telemetry.analyzer.hub
         auto-offset-reset: earliest
-        enable-auto-commit: false
         consume-attempt-timeout-ms: 7000
         key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         value-deserializer: ru.yandex.practicum.kafka.deserializer.HubEventDeserializer

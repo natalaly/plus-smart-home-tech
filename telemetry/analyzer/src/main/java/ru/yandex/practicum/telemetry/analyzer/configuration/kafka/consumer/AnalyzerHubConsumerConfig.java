@@ -22,7 +22,6 @@ public class AnalyzerHubConsumerConfig {
   private String bootstrapServers;
   private String groupId;
   private String autoOffsetReset;
-  private boolean enableAutoCommit;
   private String keyDeserializer;
   private String valueDeserializer;
   private long consumeAttemptTimeoutMs;
@@ -33,7 +32,7 @@ public class AnalyzerHubConsumerConfig {
     config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
     config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
-    config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
+    config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
     config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
     config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);
@@ -44,7 +43,8 @@ public class AnalyzerHubConsumerConfig {
   @PostConstruct
   private void validateConfig() {
     if (bootstrapServers == null || bootstrapServers.isEmpty()) {
-      throw new IllegalArgumentException("Kafka bootstrapServers for hubs consumer cannot be null or empty");
+      throw new IllegalArgumentException(
+          "Kafka bootstrapServers for hubs consumer cannot be null or empty");
     }
     if (groupId == null || groupId.isEmpty()) {
       throw new IllegalArgumentException("Kafka groupId for hubs consumer cannot be null or empty");

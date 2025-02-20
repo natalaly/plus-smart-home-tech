@@ -12,6 +12,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
+/**
+ * Configuration class for setting up a Kafka consumer in the telemetry aggregator.
+ * <p>
+ * This class provides a {@link KafkaConsumer} bean configured to consume messages of type
+ * {@link SensorEventAvro}. It retrieves Kafka consumer properties from the application's
+ * configuration.
+ * </p>
+ * Provides setting for manual control over offsets: {@code ENABLE_AUTO_COMMIT_CONFIG} is set to
+ * {@code false}
+ */
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "aggregator.kafka.consumer")
@@ -32,7 +42,7 @@ public class AggregatorKafkaConsumerConfig {
     config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
     config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
     config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
-    config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, enableAutoCommit);
+    config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
     config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, keyDeserializer);
     config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, valueDeserializer);

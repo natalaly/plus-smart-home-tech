@@ -15,7 +15,7 @@ public class HubRouterClient {
 
   private final HubRouterControllerGrpc.HubRouterControllerBlockingStub hubRouterClient;
 
-  public HubRouterClient(@GrpcClient("hubrouter")
+  public HubRouterClient(@GrpcClient("hubRouter")
                          HubRouterControllerGrpc.HubRouterControllerBlockingStub hubRouterClient) {
     this.hubRouterClient = hubRouterClient;
   }
