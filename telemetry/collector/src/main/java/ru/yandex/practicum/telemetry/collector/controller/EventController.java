@@ -1,87 +1,111 @@
 package ru.yandex.practicum.telemetry.collector.controller;
 
-import jakarta.validation.Valid;
+import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.telemetry.collector.model.enums.hub.HubEventType;
-import ru.yandex.practicum.telemetry.collector.model.hub.HubEvent;
-import ru.yandex.practicum.telemetry.collector.model.sensor.SensorEvent;
-import ru.yandex.practicum.telemetry.collector.model.enums.SensorEventType;
+import net.devh.boot.grpc.server.service.GrpcService;
+import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.telemetry.collector.service.handler.hub.HubEventHandler;
 import ru.yandex.practicum.telemetry.collector.service.handler.sensor.SensorEventHandler;
 
 /**
- * The {@link  EventController} is a REST controller responsible for handling incoming sensor and
- * hub events from the {@code Hub Router}.
+ * {@link  EventController} is a {@code gRPC} service for processing sensor and hub events received from a {@code Hub Router}.
  * <p>
- * It provides endpoints for receiving and processing two types of events:
+ * It implements the gRPC API defined in {@link CollectorControllerGrpc.CollectorControllerImplBase},
+ * providing two RPC methods: {@code collectSensorEvent} and {@code collectHubEvent}.
+ * <p>
+ * This service is responsible for:
  * <ul>
- *   <li>Sensor events - Handled by {@link SensorEventHandler}</li>
- *   <li>Hub events - Handled by {@link HubEventHandler}</li>
+ *   <li>Receiving sensor events via the {@code collectSensorEvent} method.</li>
+ *   <li>Receiving hub events via the {@code collectHubEvent} method.</li>
+ *   <li>Dispatching events to the appropriate handler based on the event's payload type.</li>
+ *   <li>Handling errors and returning appropriate responses to the gRPC client.</li>
  * </ul>
- * The controller uses separate handlers for sensor and hub events, dynamically selecting the appropriate
- * handler based on the event type.
- * <p>
- * Also, validation of the incoming request bodies is provided, ensuring
- * the events conform to the expected structure before processing.
  */
-@RestController
-@RequestMapping("/events")
+@GrpcService
 @Slf4j
-@Validated
-public class EventController {
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
-  private final Map<SensorEventType, SensorEventHandler> sensorEventHandlers;
+  private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
 
-  private final Map<HubEventType, HubEventHandler> hubEventHandlers;
+  private final Map<HubEventProto.PayloadCase, HubEventHandler> hubEventHandlers;
 
-  @Autowired
   public EventController(final Set<SensorEventHandler> sensorEventHandlers,
                          final Set<HubEventHandler> hubEventHandlers) {
     this.sensorEventHandlers = sensorEventHandlers.stream()
         .collect(Collectors.toMap(SensorEventHandler::getMessageType, Function.identity()));
     this.hubEventHandlers = hubEventHandlers.stream()
         .collect(Collectors.toMap(HubEventHandler::getMessageType, Function.identity()));
+    log.debug("Initialized EventController with {} event handlers and {} hub handlers.",
+        sensorEventHandlers.size(), hubEventHandlers.size());
   }
 
 
-  @PostMapping("/sensors")
-  @ResponseStatus(HttpStatus.OK)
-  public void collectSensorEvent(@Valid @RequestBody final SensorEvent event) {
-    log.info("Received sensor event of type: {}.", event.getType());
-    if (sensorEventHandlers.containsKey(event.getType())) {
-      sensorEventHandlers.get(event.getType()).handle(event);
-    } else {
-      log.warn("No handler found for sensor event type: {}.", event.getType());
-      throw new IllegalArgumentException(
-          "Handler for the event type " + event.getType() + " not found.");
+  /**
+   *  Processes sensor events received from a gRPC client.
+   *
+   * @param request          The sensor event received.
+   * @param responseObserver The response observer used to send a response back to the client.
+   */
+  @Override
+  public void collectSensorEvent(final SensorEventProto request,
+                                 final StreamObserver<Empty> responseObserver) {
+    log.info("Received sensor event: id={}, payloadType={}", request.getId(),
+        request.getPayloadCase());
+    try {
+      if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
+        sensorEventHandlers.get(request.getPayloadCase()).handle(request);
+      } else {
+        log.error("No handler found for event type: {}", request.getPayloadCase());
+        throw new IllegalArgumentException(
+            "Cannot find a handler for event type " + request.getPayloadCase());
+      }
+      log.info("Successfully processed event: id={}", request.getId());
+      // после обработки события возвращаем ответ клиенту
+      responseObserver.onNext(Empty.getDefaultInstance());
+      // и завершаем обработку запроса
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error while processing event: id={}, error={}", request.getId(), e.getMessage(),
+          e);
+      responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
     }
-    log.info("Successfully handled sensor event of type: {}.", event.getType());
   }
 
-  @PostMapping("/hubs")
-  @ResponseStatus(HttpStatus.OK)
-  public void collectHubEvent(@Valid @RequestBody final HubEvent event) {
-    log.info("Received hub event of type: {}.", event.getType());
-    if (hubEventHandlers.containsKey(event.getType())) {
-      hubEventHandlers.get(event.getType()).handle(event);
-    } else {
-      log.warn("No handler found for hub event type: {}.", event.getType());
-      throw new IllegalArgumentException(
-          "Handler for the event type " + event.getType() + " not found.");
+  /**
+   * Processes hub events received from a gRPC client.
+   *
+   * @param request          The hub event received.
+   * @param responseObserver The response observer used to send a response.
+   */
+  @Override
+  public void collectHubEvent(final HubEventProto request,
+                              final StreamObserver<Empty> responseObserver) {
+    log.info("Received hub event of type: {}.", request.getPayloadCase());
+    try {
+      if (hubEventHandlers.containsKey(request.getPayloadCase())) {
+        hubEventHandlers.get(request.getPayloadCase()).handle(request);
+      } else {
+        log.error("No handler found for the hub event type: {}", request.getPayloadCase());
+        throw new IllegalArgumentException(
+            "Cannot find a handler for the hub event type " + request.getPayloadCase());
+      }
+      log.info("Successfully processed hub event: id={}", request.getHubId());
+      responseObserver.onNext(Empty.getDefaultInstance());
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      log.error("Error while processing hub event: hub_id={}, error={}", request.getHubId(), e.getMessage(),
+          e);
+      responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
     }
-    log.info("Successfully handled hub event of type: {}.", event.getType());
   }
 
 }
