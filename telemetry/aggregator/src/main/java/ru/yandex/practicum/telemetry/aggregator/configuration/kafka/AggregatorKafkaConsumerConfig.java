@@ -24,7 +24,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "aggregator.kafka.consumer")
+@ConfigurationProperties("aggregator.kafka.consumer")
 @Configuration
 @Slf4j
 public class AggregatorKafkaConsumerConfig {

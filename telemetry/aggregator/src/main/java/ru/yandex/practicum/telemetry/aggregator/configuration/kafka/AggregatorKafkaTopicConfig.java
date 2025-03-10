@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "aggregator.kafka.topics")
+@ConfigurationProperties("aggregator.kafka.topics")
 @Configuration
 @Slf4j
 public class AggregatorKafkaTopicConfig {
