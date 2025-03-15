@@ -22,5 +22,4 @@ aggregator:
 logging:
   level:
     ru.yandex.practicum: DEBUG
-#    root: INFO
 
