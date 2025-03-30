@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.commerce.store.service.ShoppingStoreService;
-import ru.yandex.practicum.controller.ShoppingStoreOperations;
+import ru.yandex.practicum.api.ShoppingStoreOperations;
 import ru.yandex.practicum.dto.product.ProductCategory;
 import ru.yandex.practicum.dto.product.ProductDto;
 import ru.yandex.practicum.dto.product.ProductPage;

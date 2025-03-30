@@ -11,7 +11,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ExceptionReason {
 
-  PRODUCT_NOT_FOUND( "No such Product in the store.", HttpStatus.NOT_FOUND);
+  PRODUCT_NOT_FOUND( "No such Product in the store.", HttpStatus.NOT_FOUND),
+  NOT_AUTHORIZED_USER("User name should be present.", HttpStatus.UNAUTHORIZED),
+  NO_PRODUCTS_IN_SHOPPING_CART("No products in cart.",HttpStatus.BAD_REQUEST),
+  SHOPPING_CART_MODIFICATION_NOT_ALLOWED("Cannot modify a deactivated shopping cart.", HttpStatus.FORBIDDEN);
 
   private final String code;
   private final String message;
