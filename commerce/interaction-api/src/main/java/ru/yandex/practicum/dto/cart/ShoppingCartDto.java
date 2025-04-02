@@ -3,24 +3,28 @@ package ru.yandex.practicum.dto.cart;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * Корзина товаров в онлайн магазине
+ * Represents a shopping cart in the online store.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ShoppingCartDto {
 
   /**
-   * Идентификатор корзины в БД
+   * The unique identifier of the shopping cart in the database.
    */
   @NotNull
   private UUID shoppingCartId;
 
   /**
-   *  Отображение идентификатора товара на отобранное количество.
+   * A mapping of product IDs to their selected quantity.
    */
   @NotNull
   private Map<UUID, Long> products;

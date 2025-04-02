@@ -8,9 +8,18 @@ import org.springframework.http.HttpStatus;
  */
 public interface ExceptionPolicy {
 
-    String getCode();
+  /**
+   * @return the business-specific error code
+   */
+  String getCode();
 
-    String getMessage();
+  /**
+   * @return the user-friendlyerror message
+   */
+  String getMessage();
 
-    HttpStatus getHttpStatus();
+  /**
+   * @return the HTTP status code associated with the exception
+   */
+  HttpStatus getHttpStatus();
 }

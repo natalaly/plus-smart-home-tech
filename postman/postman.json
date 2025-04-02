@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "74714ff0-8cd7-47ea-a36c-a20e21343e99",
-		"name": "(Sprint 21) Smart Home Technologies API",
+		"_postman_id": "7155bdf2-a3a0-494a-9cd3-ea04d75107f7",
+		"name": "(Sprint 21) Smart Home Technologies API-fixedByMe",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23073145",
-		"_collection_link": "https://universal-shadow-295426.postman.co/workspace/My-Workspace~4200f6aa-0504-44b1-8a1d-707d0dcbd5ce/collection/13708500-74714ff0-8cd7-47ea-a36c-a20e21343e99?action=share&source=collection_link&creator=23073145"
+		"_exporter_id": "10869966",
+		"_collection_link": "https://solar-escape-330333.postman.co/workspace/Smart-Home-Tech~c3c1c036-4288-4cd9-afd3-c1afcf179275/collection/10869966-7155bdf2-a3a0-494a-9cd3-ea04d75107f7?action=share&source=collection_link&creator=10869966"
 	},
 	"item": [
 		{
@@ -207,6 +207,96 @@
 								"v1",
 								"shopping-store",
 								"{{product_id}}"
+							]
+						},
+						"description": "Получить сведения по товару из БД."
+					},
+					"response": []
+				},
+				{
+					"name": "get Not Existed Product  - 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Код ответа 404\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.equal(404);\r",
+									"});\r",
+									"\r",
+									"const product = pm.collectionVariables.get(\"product\");\r",
+									"\r",
+									"\r",
+									"pm.test(\"Проверка полей ответа\", function () {\r",
+									"    const responseJson = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseJson.status).to.equal(\"NOT_FOUND\");\r",
+									"    pm.expect(responseJson.code).to.equal(\"PRODUCT_NOT_FOUND\");\r",
+									"    pm.expect(responseJson.message).to.equal(\"No such Product in the store.\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"    try {\r",
+									"        product = rnd.getProduct();\r",
+									"        product = await api.addProduct(product);\r",
+									"        pm.collectionVariables.set(\"product_id\", product.productId);\r",
+									"        pm.collectionVariables.set(\"product\", product);\r",
+									"        \r",
+									"    } catch(err) {\r",
+									"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"    }\r",
+									"\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}{{shopping-store-port}}/api/v1/shopping-store/b716c3fd-23d0-4a3d-9745-37d92eef663d",
+							"host": [
+								"{{baseUrl}}{{shopping-store-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"shopping-store",
+								"b716c3fd-23d0-4a3d-9745-37d92eef663d"
 							]
 						},
 						"description": "Получить сведения по товару из БД."
@@ -459,7 +549,6 @@
 									"\r",
 									"    try {\r",
 									"        product = rnd.getProduct();\r",
-									"        product.\r",
 									"        product.quantityState = \"ENDED\";\r",
 									"        product = await api.addProduct(product);\r",
 									"\r",
@@ -677,7 +766,7 @@
 			"name": "shopping-cart",
 			"item": [
 				{
-					"name": "add Product To Shopping Cart",
+					"name": "add Product To Shopping Cart - 400- Low Quantity",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -734,28 +823,14 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Код ответа 200 или 201\", function () {\r",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"pm.test(\"Код ответа 400\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400]);\r",
 									"});\r",
 									"\r",
 									"const productList = pm.collectionVariables.get(\"productList\"); \r",
 									"const products = pm.response.json().products;\r",
 									"\r",
 									"pm.test(\"Проверка наличия продуктов и валидности количества\", function () {\r",
-									"    let allKeysPresent = true;\r",
-									"    let valuesValid = true;\r",
-									"    for (key in productList) {\r",
-									"        if (!products.hasOwnProperty(key)) {\r",
-									"            allKeysPresent = false;\r",
-									"            break;\r",
-									"        }\r",
-									"        if (products[key] < productList[key]) {\r",
-									"            valuesValid = false;\r",
-									"        }\r",
-									"    }\r",
-									"\r",
-									"    pm.expect(allKeysPresent).to.be.true;\r",
-									"    pm.expect(valuesValid).to.be.true;\r",
 									"});\r",
 									""
 								],
@@ -1070,7 +1145,7 @@
 					"response": []
 				},
 				{
-					"name": "remove From Shopping Cart",
+					"name": "remove From Shopping Cart- retain defined products",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1150,7 +1225,7 @@
 									"\r",
 									"    pm.expect(newCart.shoppingCartId).to.equal(cart.shoppingCartId);\r",
 									"\r",
-									"    pm.expect(newCart.products).to.eql({});\r",
+									"    pm.expect(newCart.products).to.eql(cart.products);\r",
 									"});\r",
 									""
 								],
@@ -1304,6 +1379,154 @@
 							]
 						},
 						"description": "Деактивация корзины товаров для пользователя."
+					},
+					"response": []
+				},
+				{
+					"name": "add Product To Shopping Cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const main = async () => {\r",
+									"    const api = new API(pm);\r",
+									"    const rnd = new RandomUtils();\r",
+									"\r",
+									"try {\r",
+									"    pm.collectionVariables.set(\"userName\", rnd.getWord(10));\r",
+									"    product1 = rnd.getProductForWarehouse();\r",
+									"    product2 = rnd.getProductForWarehouse();\r",
+									"    await api.addProductToWarehouse(product1);        \r",
+									"    await api.addProductToWarehouse(product2);\r",
+									"    \r",
+									"    amount1 = Math.floor(Math.random() * 1000);\r",
+									"    amount2 = Math.floor(Math.random() * 1000);\r",
+									"\r",
+									"    productList = {\r",
+									"        [product1.productId]: amount1, // Случайное число до 1000\r",
+									"        [product2.productId]: amount2  // Случайное число до 1000\r",
+									"    };\r",
+									"    \r",
+									"    pr1 = {\r",
+									"            \"productId\": product1.productId,\r",
+									"            \"quantity\": amount1\r",
+									"        }\r",
+									"    pr2 = {\r",
+									"            \"productId\": product2.productId,\r",
+									"            \"quantity\": amount2\r",
+									"        }\r",
+									"\r",
+									"    await api.addQuantityOfProductsToWarehouse(pr1);\r",
+									"    await api.addQuantityOfProductsToWarehouse(pr2);\r",
+									"\r",
+									"    console.log(\"Список продуктов\", productList);\r",
+									"    pm.collectionVariables.set(\"productList\", productList); // Сохраняем productList, если нужно\r",
+									"} catch (err) {\r",
+									"    console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+									"}\r",
+									"\r",
+									"    pm.request.body.update({\r",
+									"        mode: 'raw',\r",
+									"        raw: JSON.stringify(productList),\r",
+									"        options: { raw: { language: 'json' } }\r",
+									"    });\r",
+									"};\r",
+									"\r",
+									"const interval = setInterval(() => {}, 1000);\r",
+									"\r",
+									"setTimeout(async () => \r",
+									"    {\r",
+									"        try {\r",
+									"            await main();\r",
+									"        } catch (e) {\r",
+									"            console.error(e);\r",
+									"        } finally {\r",
+									"            clearInterval(interval);\r",
+									"        }\r",
+									"    },  \r",
+									"    100 \r",
+									");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Код ответа 200 или 201\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+									"});\r",
+									"\r",
+									"const productList = pm.collectionVariables.get(\"productList\"); \r",
+									"const products = pm.response.json().products;\r",
+									"\r",
+									"pm.test(\"Проверка наличия продуктов и валидности количества\", function () {\r",
+									"    let allKeysPresent = true;\r",
+									"    let valuesValid = true;\r",
+									"    for (key in productList) {\r",
+									"        if (!products.hasOwnProperty(key)) {\r",
+									"            allKeysPresent = false;\r",
+									"            break;\r",
+									"        }\r",
+									"        if (products[key] < productList[key]) {\r",
+									"            valuesValid = false;\r",
+									"        }\r",
+									"    }\r",
+									"\r",
+									"    pm.expect(allKeysPresent).to.be.true;\r",
+									"    pm.expect(valuesValid).to.be.true;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"headerFamily": "json",
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}{{shopping-cart-port}}/api/v1/shopping-cart?username={{userName}}",
+							"host": [
+								"{{baseUrl}}{{shopping-cart-port}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"shopping-cart"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "{{userName}}",
+									"description": "(Required) "
+								}
+							]
+						},
+						"description": "Добавить товар в корзину."
 					},
 					"response": []
 				}
@@ -1679,11 +1902,11 @@
 					"    }\r",
 					"\r",
 					"    async addQuantityOfProductsToWarehouse(productList, verbose=null) {\r",
-					"        return this.post(\"/api/v1/warehouse/add\", productList, \"Ошибка при увеличении количества продуктов на складе: \", verbose);\r",
+					"        return this.put(\"/api/v1/warehouse/add\", productList, \"Ошибка при увеличении количества продуктов на складе: \", verbose);\r",
 					"    }\r",
 					"\r",
 					"    async addProductToShoppingCart(username, productList, verbose=null) {\r",
-					"        return this.put(\"/api/v1/shopping-cart?username=\" + username, productList, \"Ошибка при добавлении продуктов в корзину: \", verbose);\r",
+					"        return this.post(\"/api/v1/shopping-cart?username=\" + username, productList, \"Ошибка при добавлении продуктов в корзину: \", verbose);\r",
 					"    }\r",
 					"\r",
 					"    async addProductToWarehouse(product, verbose=null) {\r",

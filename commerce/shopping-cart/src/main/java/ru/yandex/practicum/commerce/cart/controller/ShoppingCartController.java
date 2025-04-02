@@ -14,7 +14,9 @@ import ru.yandex.practicum.dto.cart.ChangeProductQuantityRequest;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 
 /**
- * REST controller for managing products in the shopping cart.
+ * REST controller for managing shopping cart operations.
+ * <p>
+ * Implements {@link ShoppingCartOperations}
  */
 @RestController
 @RequestMapping("/api/v1/shopping-cart")
@@ -58,8 +60,10 @@ public class ShoppingCartController implements ShoppingCartOperations {
   }
 
   @Override
-  public ShoppingCartDto changeQuantity(final String username, final ChangeProductQuantityRequest request) {
-    log.info("Received request to change quantity of product {} by user {}.", request.getProductId(), username);
+  public ShoppingCartDto changeQuantity(final String username,
+                                        final ChangeProductQuantityRequest request) {
+    log.info("Received request to change quantity of product {} by user {}.",
+        request.getProductId(), username);
     final ShoppingCartDto cartDto = shoppingCartService.changeProductQuantity(username, request);
     log.info("Returning shopping cart ID {} with updated product.", cartDto.getShoppingCartId());
     return cartDto;

@@ -7,6 +7,5 @@ import ru.yandex.practicum.commerce.cart.model.ShoppingCart;
 
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, UUID> {
 
-
   Optional<ShoppingCart> findByUsername(String username);
 }

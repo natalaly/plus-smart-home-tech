@@ -98,12 +98,17 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
   }
 
   private void updateProductContent(final Product target, final ProductDto source) {
-    target.setProductName(source.getProductName() != null ? source.getProductName() : target.getProductName());
-    target.setDescription(source.getDescription() != null ? source.getDescription() : target.getDescription());
+    target.setProductName(
+        source.getProductName() != null ? source.getProductName() : target.getProductName());
+    target.setDescription(
+        source.getDescription() != null ? source.getDescription() : target.getDescription());
     target.setImageSrc(source.getImageSrc() != null ? source.getImageSrc() : target.getImageSrc());
-    target.setQuantityState(source.getQuantityState() != null ? source.getQuantityState() : target.getQuantityState());
-    target.setProductState(source.getProductState() != null ? source.getProductState() : target.getProductState());
-    target.setProductCategory(source.getProductCategory() != null ? source.getProductCategory() : target.getProductCategory());
+    target.setQuantityState(
+        source.getQuantityState() != null ? source.getQuantityState() : target.getQuantityState());
+    target.setProductState(
+        source.getProductState() != null ? source.getProductState() : target.getProductState());
+    target.setProductCategory(source.getProductCategory() != null ? source.getProductCategory()
+        : target.getProductCategory());
     target.setPrice(source.getPrice() != null ? source.getPrice() : target.getPrice());
   }
 

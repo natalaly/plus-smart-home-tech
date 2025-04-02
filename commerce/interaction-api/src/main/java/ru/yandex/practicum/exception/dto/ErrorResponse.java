@@ -15,15 +15,16 @@ public record ErrorResponse(
     LocalDateTime timestamp,
     String cause
 ) {
-    public static ErrorResponse fromException(Exception ex, HttpStatus status, String code) {
-        return new ErrorResponse(
-            status,
-            code,
-            ex.getMessage(),
-            LocalDateTime.now(),
-            (ex.getCause() != null) ? ex.getCause().toString() : "No further details."
-        );
-    }
+
+  public static ErrorResponse fromException(Exception ex, HttpStatus status, String code) {
+    return new ErrorResponse(
+        status,
+        code,
+        ex.getMessage(),
+        LocalDateTime.now(),
+        (ex.getCause() != null) ? ex.getCause().toString() : "No further details."
+    );
+  }
 }
 
 

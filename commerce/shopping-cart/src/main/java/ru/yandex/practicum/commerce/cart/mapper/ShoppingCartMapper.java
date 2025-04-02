@@ -8,7 +8,5 @@ import ru.yandex.practicum.dto.cart.ShoppingCartDto;
  */
 public interface ShoppingCartMapper {
 
-  ShoppingCart toEntity(ShoppingCartDto cartDto);
-
   ShoppingCartDto toDto(ShoppingCart cart);
 }

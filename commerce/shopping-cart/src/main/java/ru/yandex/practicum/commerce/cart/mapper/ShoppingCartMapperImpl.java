@@ -10,14 +10,6 @@ import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 @Slf4j
 public class ShoppingCartMapperImpl implements ShoppingCartMapper {
 
-//  TODO
-  @Override
-  public ShoppingCart toEntity(final ShoppingCartDto cartDto) {
-    log.debug("Mapping ShoppingCartDto {} to ShoppingCart.", cartDto);
-    Objects.requireNonNull(cartDto);
-    return null;
-  }
-
   @Override
   public ShoppingCartDto toDto(final ShoppingCart cart) {
     log.debug("Mapping ShoppingCart {} to ShoppingCartDto.", cart);

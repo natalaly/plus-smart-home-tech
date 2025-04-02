@@ -19,6 +19,5 @@ public interface ShoppingCartService {
 
   ShoppingCartDto retainProductsInTheCart(String username, Set<UUID> products);
 
-
   ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest request);
 }

@@ -13,12 +13,17 @@ import jakarta.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a shopping cart in the online store.
+ */
 @Entity
 @Table(name = "shopping_carts", schema = "cart")
 @Getter
@@ -26,6 +31,8 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "cartId")
 @ToString(exclude = "products")
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ShoppingCart {
 
   @Id

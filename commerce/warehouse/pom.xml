@@ -43,7 +43,6 @@
             <artifactId>spring-retry</artifactId>
         </dependency>
 
-        <!-- TODO delete??? Spring Boot Web for REST API -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

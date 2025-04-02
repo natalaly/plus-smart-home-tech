@@ -20,55 +20,62 @@ import ru.yandex.practicum.dto.cart.ChangeProductQuantityRequest;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 
 /**
- * API для обеспечения работы корзины онлайн магазина
+ * API for managing the shopping cart in an online store.
  */
 public interface ShoppingCartOperations {
 
   /**
-   * Получить актуальную корзину для авторизованного пользователя.
-   * @param username авторизованный пользователь
-   * @return Ранее созданная или новая, в случае ранее созданной, корзина в онлайн магазине
+   * Retrieves the current shopping cart for an authenticated user. If a cart already exists, it is
+   * returned; otherwise, a new one is created.
+   *
+   * @param username the authenticated user
+   * @return the existing or newly created shopping cart
    */
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   ShoppingCartDto getShoppingCart(@RequestParam @NotBlank String username);
 
   /**
-   * Добавить товар в корзину.
-   * @param products Отображение идентификатора товара на отобранное количество.
-   * @param username авторизованный пользователь
-   * @return Корзина товаров с изменениями
+   * Adds products to the shopping cart.
+   *
+   * @param products a mapping of product IDs to the selected quantity
+   * @param username the authenticated user
+   * @return the updated shopping cart
    */
   @PostMapping
   @ResponseStatus(HttpStatus.OK)
-  ShoppingCartDto addProductToCart(@RequestBody @NotEmpty Map<UUID,  @NotNull @Positive Long> products,
-                                   @RequestParam @NotBlank String username);
+  ShoppingCartDto addProductToCart(
+      @RequestBody @NotEmpty Map<@NotNull UUID, @NotNull @Positive Long> products,
+      @RequestParam @NotBlank String username);
 
   /**
-   * Деактивация корзины товаров для пользователя.
-   * @param username авторизованный пользователь
+   * Deactivates the current shopping cart for the user.
+   *
+   * @param username the authenticated user
    */
   @DeleteMapping
   @ResponseStatus(HttpStatus.OK)
   void deactivateCurrentCart(@RequestParam @NotBlank String username);
 
   /**
-   * Изменить состав товаров в корзине, т.е. удалить другие, те, которые не указаны.
-   *( Retain only products that are in the provided productIds list.)
-   * @param username авторизованный пользователь
-   * @param products Отображение идентификатора товара на отобранное количество.
-   * @return Корзина товаров с изменениями
+   * Modifies the contents of the shopping cart by retaining only the specified products. All other
+   * products are removed.
+   *
+   * @param username the authenticated user
+   * @param products a set of product IDs to retain in the cart
+   * @return the updated shopping cart
    */
   @PutMapping("/remove")
   @ResponseStatus(HttpStatus.OK)
-  ShoppingCartDto removeProductsFromCart(@RequestParam  @NotBlank String username,
-                                 @RequestBody Set<@NotNull UUID> products);
+  ShoppingCartDto removeProductsFromCart(@RequestParam @NotBlank String username,
+                                         @RequestBody Set<@NotNull UUID> products);
 
   /**
-   * Изменить количество товаров в корзине
-   * @param username авторизованный пользователь
-   * @param request Запрос на изменение количества единиц товара
-   * @return Корзина товаров с изменениями
+   * Changes the quantity of a product in the shopping cart.
+   *
+   * @param username the authenticated user
+   * @param request  the request to update the product quantity
+   * @return the updated shopping cart
    */
   @PutMapping("/change-quantity")
   @ResponseStatus(HttpStatus.OK)

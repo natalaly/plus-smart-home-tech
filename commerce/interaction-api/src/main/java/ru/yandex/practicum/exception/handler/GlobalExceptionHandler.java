@@ -5,21 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.exception.ApiException;
 import ru.yandex.practicum.exception.dto.ErrorResponse;
 
 /**
  * Global API exception handler responsible of catching any uncaught {@link Exception} and
- * converting it into a JSON response.
+ * converting it into standardized {@link ErrorResponse} JSON responses.
  */
-@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<ErrorResponse> handleApiException(final ApiException ex) {
-    log.warn("API Exception: {} - {}", ex.getMessage(), ex.getLogDetails(), ex);
+    log.warn("API Exception: {} - {}", ex.getMessage(), ex.getDebugMessage(), ex);
+
     final ErrorResponse response = ErrorResponse.fromException(
         ex,
         ex.getHttpStatus(),
@@ -31,6 +30,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleUncaughtException(final Exception ex) {
     log.warn("Unexpected error: {}", ex.getMessage(), ex);
+
     final ErrorResponse response = new ErrorResponse(
         HttpStatus.INTERNAL_SERVER_ERROR,
         "INTERNAL_ERROR",

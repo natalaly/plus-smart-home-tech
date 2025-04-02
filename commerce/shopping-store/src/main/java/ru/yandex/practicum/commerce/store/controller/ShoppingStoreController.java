@@ -16,6 +16,7 @@ import ru.yandex.practicum.api.ShoppingStoreOperations;
 import ru.yandex.practicum.dto.product.ProductCategory;
 import ru.yandex.practicum.dto.product.ProductDto;
 import ru.yandex.practicum.dto.product.ProductPage;
+import ru.yandex.practicum.dto.product.QuantityState;
 import ru.yandex.practicum.dto.product.SetProductQuantityStateRequest;
 
 /**
@@ -38,9 +39,8 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
    * @return a page of products
    */
   @Override
-//  @GetMapping
-//  @ResponseStatus(HttpStatus.OK)
-  public ProductPage getProductsByCategory(final ProductCategory category, final Pageable pageable) {
+  public ProductPage getProductsByCategory(final ProductCategory category,
+                                           final Pageable pageable) {
     log.info("Received request to fetch products for the category: {}, with pagination: {}.",
         category, pageable);
     final Page<ProductDto> response = shoppingStoreService.getProductsByCategory(category,
@@ -56,9 +56,7 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
    * @return the product details
    */
   @Override
-//  @GetMapping("/{productId}")
-//  @ResponseStatus(HttpStatus.OK)
-  public ProductDto getProductById(UUID productId) {
+  public ProductDto getProductById(final UUID productId) {
     log.info("Received request to retrieve data of the product with ID: {}.", productId);
     final ProductDto product = shoppingStoreService.getProductById(productId);
     log.info("Returning details of the product {}.", product.getProductName());
@@ -72,8 +70,6 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
    * @return the created product
    */
   @Override
-//  @PostMapping
-//  @ResponseStatus(HttpStatus.OK)
   public ProductDto addProduct(final ProductDto productDto) {
     log.info("Request received to add a new product: {}.", productDto.getProductName());
     final ProductDto savedProduct = shoppingStoreService.addProduct(productDto);
@@ -89,8 +85,6 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
    * @return the updated product
    */
   @Override
-//  @PutMapping
-//  @ResponseStatus(HttpStatus.OK)
   public ProductDto updateProduct(final ProductDto productDto) {
     log.info("Request received to update a product with ID {}.", productDto.getProductId());
     final ProductDto updatedProduct = shoppingStoreService.updateProduct(productDto);
@@ -106,9 +100,9 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
    * @return true if the update was successful
    */
   @Override
-//  @PutMapping("/quantityState")
-//  @ResponseStatus(HttpStatus.OK)
-  public boolean updateQuantityState(final SetProductQuantityStateRequest request) {
+  public boolean updateQuantityState(final UUID productId, final QuantityState quantityState) {
+    final SetProductQuantityStateRequest request = new SetProductQuantityStateRequest(productId,
+        quantityState);
     log.info("Request received to update quantity state for the product with ID {}.",
         request.getProductId());
     boolean isUpdated = shoppingStoreService.updateQuantityState(request);
@@ -131,5 +125,4 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
     log.info("Product state updated successfully to 'DEACTIVATE'.");
     return isRemoved;
   }
-
 }

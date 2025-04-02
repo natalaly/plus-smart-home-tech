@@ -13,8 +13,7 @@ CREATE TABLE IF NOT EXISTS cart.shopping_cart_products
     product_id UUID NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
     PRIMARY KEY (cart_id, product_id),
-    FOREIGN KEY (cart_id) REFERENCES cart.shopping_carts(cart_id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES store.products(product_id) ON DELETE CASCADE
+    FOREIGN KEY (cart_id) REFERENCES cart.shopping_carts(cart_id) ON DELETE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_cart_username ON cart.shopping_carts(username);
