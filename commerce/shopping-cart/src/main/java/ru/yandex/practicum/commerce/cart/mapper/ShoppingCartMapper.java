@@ -1,12 +1,24 @@
 package ru.yandex.practicum.commerce.cart.mapper;
 
+import java.util.Objects;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.commerce.cart.model.ShoppingCart;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 
 /**
- * Interface for mapping between ShoppingCart and ShoppingCartDto objects.
+ * Utility class for mapping between ShoppingCart and ShoppingCartDto objects.
  */
-public interface ShoppingCartMapper {
+@UtilityClass
+@Slf4j
+public class ShoppingCartMapper {
 
-  ShoppingCartDto toDto(ShoppingCart cart);
+  public ShoppingCartDto toDto(final ShoppingCart cart) {
+    log.debug("Mapping ShoppingCart {} to ShoppingCartDto.", cart);
+    Objects.requireNonNull(cart);
+    return ShoppingCartDto.builder()
+        .shoppingCartId(cart.getCartId())
+        .products(cart.getProducts())
+        .build();
+  }
 }

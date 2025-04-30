@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import ru.yandex.practicum.exception.ApiException;
 import ru.yandex.practicum.exception.ExceptionReason;
@@ -23,9 +22,11 @@ import ru.yandex.practicum.exception.dto.ErrorResponse;
 public class FeignErrorDecoder implements ErrorDecoder {
 
   private final ErrorDecoder defaultDecoder = new Default();
+  private final ObjectMapper objectMapper;
 
-  @Autowired
-  private ObjectMapper objectMapper;
+  public FeignErrorDecoder(ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
   @Override
   public Exception decode(final String methodKey, final Response response) {

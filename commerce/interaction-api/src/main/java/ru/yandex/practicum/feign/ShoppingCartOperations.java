@@ -1,4 +1,4 @@
-package ru.yandex.practicum.api;
+package ru.yandex.practicum.feign;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +21,9 @@ import ru.yandex.practicum.dto.cart.ChangeProductQuantityRequest;
 import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 
 /**
- * API for managing the shopping cart in an online store.
+ * Client API interface for managing the shopping cart in an online store.
  */
+@FeignClient(name = "shopping-cart", path = "/api/v1/shopping-cart")
 public interface ShoppingCartOperations {
 
   /**

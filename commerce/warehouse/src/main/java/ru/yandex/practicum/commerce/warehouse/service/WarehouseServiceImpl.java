@@ -31,14 +31,13 @@ public class WarehouseServiceImpl implements WarehouseService {
 
   private final ProductRepository productRepository;
   private final WarehouseAddressService addressService;
-  private final ProductMapper mapper;
 
   @Transactional
   @Override
   public void addNewProduct(final NewProductInWarehouseRequest request) {
     log.debug("Adding new product to the warehouse: {}", request);
     validateProductIsNew(request.getProductId());
-    final Product product = mapper.toEntity(request);
+    final Product product = ProductMapper.toEntity(request);
     Product savedProduct = productRepository.save(product);
     log.debug("Added product tho the warehouse: ID:{}, quantity:{} ",
         savedProduct.getProductId(), savedProduct.getQuantity());

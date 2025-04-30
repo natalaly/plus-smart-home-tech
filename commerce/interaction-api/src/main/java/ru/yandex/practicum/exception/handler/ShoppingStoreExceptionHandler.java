@@ -1,9 +1,8 @@
-package ru.yandex.practicum.commerce.store.controller;
+package ru.yandex.practicum.exception.handler;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.exception.handler.GlobalExceptionHandler;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "ru.yandex.practicum.commerce.store")
 public class ShoppingStoreExceptionHandler extends GlobalExceptionHandler {
 
 }

@@ -18,7 +18,7 @@ import ru.yandex.practicum.dto.cart.ShoppingCartDto;
 import ru.yandex.practicum.exception.NoProductsInShoppingCartException;
 import ru.yandex.practicum.exception.NotAuthorizedUserException;
 import ru.yandex.practicum.exception.ShoppingCartModificationException;
-import ru.yandex.practicum.feign.WarehouseClient;
+import ru.yandex.practicum.feign.WarehouseOperations;
 
 /**
  * Service implementation for managing shopping cart operations.
@@ -34,9 +34,8 @@ import ru.yandex.practicum.feign.WarehouseClient;
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
   private final ShoppingCartRepository cartRepository;
-  private final WarehouseClient warehouseClient;
+  private final WarehouseOperations warehouseClient;
   private final UuidGenerator uuidGenerator;
-  private final ShoppingCartMapper mapper;
 
   @Transactional
   @Override
@@ -45,7 +44,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     log.debug("Retrieving shopping cart for the user {}.", username);
 
     final ShoppingCart shoppingCart = getOrCreateShoppingCart(username);
-    return mapper.toDto(shoppingCart);
+    return ShoppingCartMapper.toDto(shoppingCart);
   }
 
   @Transactional
@@ -61,7 +60,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     log.debug("Shopping cart after adding products: {}", shoppingCart);
 
-    final ShoppingCartDto cartDto = mapper.toDto(shoppingCart);
+    final ShoppingCartDto cartDto = ShoppingCartMapper.toDto(shoppingCart);
     validateAllProductsAvailable(cartDto);
     cartRepository.save(shoppingCart);
     return cartDto;
@@ -99,7 +98,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     final ShoppingCart updatedCart = cartRepository.save(shoppingCart);
     log.debug("Updated cart: {}.", updatedCart);
-    return mapper.toDto(updatedCart);
+    return ShoppingCartMapper.toDto(updatedCart);
   }
 
   @Transactional
@@ -123,7 +122,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     final ShoppingCart updatedCart = cartRepository.save(shoppingCart);
     log.debug("Updated quantity for the product {} in the cart: {} .",
         request.getProductId(), updatedCart);
-    return mapper.toDto(updatedCart);
+    return ShoppingCartMapper.toDto(updatedCart);
   }
 
   private void validateAllProductsAvailable(final ShoppingCartDto cartDto) {

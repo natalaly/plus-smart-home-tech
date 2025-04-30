@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.commerce.store.service.ShoppingStoreService;
-import ru.yandex.practicum.api.ShoppingStoreOperations;
+import ru.yandex.practicum.feign.ShoppingStoreOperations;
 import ru.yandex.practicum.dto.product.ProductCategory;
 import ru.yandex.practicum.dto.product.ProductDto;
 import ru.yandex.practicum.dto.product.ProductPage;
@@ -95,8 +95,8 @@ public class ShoppingStoreController implements ShoppingStoreOperations {
   /**
    * Updates the quantity status of a product in the store. (The API is called from the warehouse
    * side.)
-   *
-   * @param request the request object containing the quantity status update details
+   * @param productId     the unique identifier of the product
+   * @param quantityState the new quantity state to be set for the product
    * @return true if the update was successful
    */
   @Override

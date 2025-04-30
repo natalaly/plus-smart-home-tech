@@ -1,5 +1,6 @@
-package ru.yandex.practicum.api;
+package ru.yandex.practicum.feign;
 
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,9 @@ import ru.yandex.practicum.dto.warehouse.BookedProductsDto;
 import ru.yandex.practicum.dto.warehouse.NewProductInWarehouseRequest;
 
 /**
- * API for the operations of the online store warehouse.
+ * Client API interface for the operations of the online store warehouse.
  */
+@FeignClient(name = "warehouse", path = "/api/v1/warehouse")
 public interface WarehouseOperations {
 
   /**

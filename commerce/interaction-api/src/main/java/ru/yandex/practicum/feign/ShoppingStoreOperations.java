@@ -1,7 +1,8 @@
-package ru.yandex.practicum.api;
+package ru.yandex.practicum.feign;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,9 @@ import ru.yandex.practicum.dto.product.ProductPage;
 import ru.yandex.practicum.dto.product.QuantityState;
 
 /**
- * API for managing products in the online store.
+ * Client API interface for managing products in the online store.
  */
+@FeignClient(name = "shopping-store", path = "/api/v1/shopping-store")
 public interface ShoppingStoreOperations {
 
   /**

@@ -9,7 +9,7 @@ import ru.yandex.practicum.exception.ApiException;
 import ru.yandex.practicum.exception.dto.ErrorResponse;
 
 /**
- * Global API exception handler responsible of catching any uncaught {@link Exception} and
+ * Global API exception handler responsible for catching any uncaught {@link Exception} and
  * converting it into standardized {@link ErrorResponse} JSON responses.
  */
 @Slf4j

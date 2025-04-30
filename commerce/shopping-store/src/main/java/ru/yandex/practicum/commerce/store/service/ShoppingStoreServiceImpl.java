@@ -28,7 +28,6 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
 
   private final ProductRepository productRepository;
   private final UuidGenerator uuidGenerator;
-  private final ProductMapper mapper;
 
   @Transactional(readOnly = true)
   @Override
@@ -39,7 +38,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     final PageRequest page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
         pageable.getSort());
     final Page<Product> products = productRepository.findAllByProductCategory(category, page);
-    return products.map(mapper::toDto);
+    return products.map(ProductMapper::toDto);
   }
 
   @Transactional(readOnly = true)
@@ -48,7 +47,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     log.debug("Retrieving details of the product with ID {}...", productId);
     final Product product = getProductOrThrow(productId);
     log.debug("Successfully retrieved product: {}", product);
-    return mapper.toDto(product);
+    return ProductMapper.toDto(product);
   }
 
   @Transactional
@@ -56,10 +55,10 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
   public ProductDto addProduct(final ProductDto productDto) {
     log.debug("Saving new product info to the DB: {}...", productDto);
     setId(productDto);
-    final Product productToSave = mapper.toEntity(productDto);
+    final Product productToSave = ProductMapper.toEntity(productDto);
     final Product savedProduct = productRepository.save(productToSave);
     log.debug("New product saved successfully with ID: {}.", savedProduct.getProductId());
-    return mapper.toDto(savedProduct);
+    return ProductMapper.toDto(savedProduct);
   }
 
   @Transactional
@@ -70,7 +69,7 @@ public class ShoppingStoreServiceImpl implements ShoppingStoreService {
     updateProductContent(product, productDto);
     final Product updatedProduct = productRepository.save(product);
     log.debug("Updated product: {}.", updatedProduct);
-    return mapper.toDto(updatedProduct);
+    return ProductMapper.toDto(updatedProduct);
   }
 
   @Transactional

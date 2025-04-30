@@ -16,8 +16,8 @@ import ru.yandex.practicum.exception.decoder.FeignErrorDecoder;
 public class ShoppingCartConfig {
 
   @Bean
-  public ErrorDecoder errorDecoder() {
-    return new FeignErrorDecoder();
+  public ErrorDecoder errorDecoder(ObjectMapper objectMapper) {
+    return new FeignErrorDecoder(objectMapper);
   }
 
   @Bean
