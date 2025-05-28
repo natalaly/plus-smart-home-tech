@@ -53,19 +53,20 @@ public class DeliveryServiceImpl implements DeliveryService {
   public void confirmDelivery(final UUID orderId) {
     log.debug("Setting delivery state for order with ID {} as DELIVERED.", orderId);
 
-    final Delivery delivery = updateDeliveryState(orderId,DeliveryState.DELIVERED);
+    final Delivery delivery = setDeliveryStateValue(orderId,DeliveryState.DELIVERED);
 
     log.debug("Sending request to Order service to confirm order {} is DELIVERED.", orderId);
     orderClient.markAsDelivered(delivery.getOrderId());
     log.debug("Delivery is confirmed in order service.");
+
+    deliveryRepository.save(delivery);
   }
 
   @Override
-  @Transactional
   public void acceptForDelivery(final UUID orderId) {
     log.debug("Accepting order {} for delivery by updating its state as IN_PROGRESS.", orderId);
 
-    final Delivery delivery = updateDeliveryState(orderId,DeliveryState.IN_PROGRESS);
+    final Delivery delivery = setDeliveryStateValue(orderId,DeliveryState.IN_PROGRESS);
 
     log.debug("Sending request to Order service, that order {} is assembled.", orderId);
     orderClient.assembleOrder(orderId);
@@ -74,6 +75,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     warehouseClient.sendToDelivery(DeliveryMapper.toShipRequest(orderId, delivery.getDeliveryId()));
     log.debug("Delivery {} for order {} marked as IN_PROGRESS and linked with warehouse.",
         delivery.getDeliveryId(), orderId);
+
+    deliveryRepository.save(delivery);
   }
 
   @Override
@@ -81,12 +84,14 @@ public class DeliveryServiceImpl implements DeliveryService {
   public void failDelivery(final UUID orderId) {
     log.debug("Setting delivery state for the order {} as FAILED.", orderId);
 
-    final Delivery delivery = updateDeliveryState(orderId,DeliveryState.FAILED);
+    final Delivery delivery = setDeliveryStateValue(orderId,DeliveryState.FAILED);
 
     log.debug("Sending request to Order service to mark delivery {} as FAILED.",
         delivery.getDeliveryId());
     orderClient.markDeliveryFailed(orderId);
     log.debug("Delivery is marked in order service as FAILED.");
+
+    deliveryRepository.save(delivery);
   }
 
   @Override
@@ -110,10 +115,10 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
   }
 
-  private Delivery updateDeliveryState(final UUID orderId, final DeliveryState newState) {
+  private Delivery setDeliveryStateValue(final UUID orderId, final DeliveryState newState) {
 
     final Delivery delivery = getDeliveryOrThrow(orderId);
     delivery.setDeliveryState(newState);
-    return deliveryRepository.save(delivery);
+    return delivery;
   }
 }
